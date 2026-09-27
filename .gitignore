@@ -1,1 +1,4 @@
 *.class
+client_file.txt
+server_log.txt
+client_log.txt

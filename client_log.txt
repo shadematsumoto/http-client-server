@@ -1,6 +1,0 @@
-Connecting to localhost on port 25000...
-Connected to server
-Receiving file from server...
-Received 6307 bytes
-Saved file as client_file.txt
-Connection closed
