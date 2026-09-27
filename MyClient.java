@@ -4,10 +4,6 @@ import java.io.InputStream;
 import java.net.Socket;
 
 /*
- * ICS 451 - Data Networks
- * Assignment 3: Simple HTTP Client
- * Shade Matsumoto
- *
  * Connects to MyServer on localhost, reads the file the server sends,
  * and saves it as client_file.txt.
  *

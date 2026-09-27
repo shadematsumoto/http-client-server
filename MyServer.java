@@ -5,10 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /*
- * ICS 451 - Data Networks
- * Assignment 3: Simple HTTP Server
- * Shade Matsumoto
- *
  * Waits for a client to connect, sends it server_file.txt, then closes
  * the connection. Only one client is handled at a time (no threads).
  * The server keeps running after each client so it can be tested with

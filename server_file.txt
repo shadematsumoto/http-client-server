@@ -1,13 +1,13 @@
 ALOHAnet: Packet Radio at the University of Hawaii
 ==================================================
 
-This is the file the server sends for ICS 451 Assignment 3. When a
-client connects, MyServer sends this whole file and then closes the
-connection. The client saves what it receives as client_file.txt, so
-the two files should end up exactly the same.
+This is the sample file that MyServer sends. When a client connects,
+the server sends this whole file and then closes the connection. The
+client saves what it receives as client_file.txt, so the two files
+should end up exactly the same.
 
-Since this is a networking class at UH, the file is about one of the
-first wireless computer networks, which was built right here at Manoa.
+The text is about one of the first wireless computer networks, which
+was built at the University of Hawaii at Manoa.
 
 
 Why build it?
@@ -118,11 +118,11 @@ lot of the networks people use every day still have a little bit of
 ALOHAnet in them.
 
 
-How this connects to the assignment
------------------------------------
+How this connects to MyServer and MyClient
+------------------------------------------
 
-In this assignment we don't have to deal with any of that directly. The
-programs use TCP through Java's Socket class, and TCP takes care of
+MyServer and MyClient don't have to deal with any of that directly. They
+use TCP through Java's Socket class, and TCP takes care of
 lost packets, retransmissions, and putting the bytes back in order
 before our code ever sees them.
 
