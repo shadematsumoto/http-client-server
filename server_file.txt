@@ -1,0 +1,146 @@
+ALOHAnet: Packet Radio at the University of Hawaii
+==================================================
+
+This is the file the server sends for ICS 451 Assignment 3. When a
+client connects, MyServer sends this whole file and then closes the
+connection. The client saves what it receives as client_file.txt, so
+the two files should end up exactly the same.
+
+Since this is a networking class at UH, the file is about one of the
+first wireless computer networks, which was built right here at Manoa.
+
+
+Why build it?
+-------------
+
+In the late 1960s the University of Hawaii had its main computer on the
+Manoa campus in Honolulu, but a lot of the people who needed to use it
+were at campuses on the other islands. Connecting them over leased
+telephone lines was expensive, and phone lines were not great for data
+anyway. Radio was an obvious alternative since there was nothing but
+open ocean between the islands.
+
+Norman Abramson and a group of faculty and students started the ALOHA
+System project to try this out, and the network started running in
+1971. It is usually just called ALOHAnet.
+
+
+How it worked
+-------------
+
+The layout was a simple star. A central computer at Manoa acted as the
+hub, and the remote terminals talked to it over radio instead of wires.
+There were two radio channels:
+
+  1. An outbound channel that only the hub transmitted on. Since only
+     one station ever used it, there were no collisions on it. The hub
+     just broadcast and each terminal kept the packets addressed to it.
+
+  2. An inbound channel that every remote terminal shared for sending
+     data back to the hub. This is where things got interesting,
+     because nothing stopped two terminals from transmitting at the
+     same time.
+
+The rule for the shared channel was about as simple as a rule can be:
+
+  - If you have a packet, send it right away.
+  - If the hub gets it without errors, the hub sends back an
+    acknowledgment on the outbound channel.
+  - If two packets overlap, they collide and both are garbled. The hub
+    throws them away and sends no acknowledgment.
+  - If you don't get an acknowledgment within a set amount of time,
+    wait a random amount of time and send the packet again.
+
+The random wait is the important part. If both stations waited the same
+fixed amount of time they would just collide again on every retry.
+Picking random delays spreads them out, so usually one of them gets
+through on the next attempt and the other one gets through after that.
+
+There is no central scheduler and no one asks for permission to talk.
+Every station makes its own decisions using only one piece of
+information: did my packet get acknowledged or not. That is part of why
+the design was so cheap and easy to build.
+
+
+How well does it work?
+----------------------
+
+The simple version, now called pure ALOHA, wastes a lot of the channel.
+A packet is in danger from any other packet that starts during a window
+two packet-times long: anything that starts just before it and anything
+that starts while it is still going out. Working through the math with
+random (Poisson) traffic gives a best-case throughput of 1/(2e), which
+is only about 18 percent of the channel's capacity. If stations try to
+push more traffic than that, the throughput actually goes down because
+collisions start to take over.
+
+A later improvement called slotted ALOHA divides time into fixed slots
+that are each one packet long, and stations are only allowed to start
+sending at the beginning of a slot. Now two packets either land in the
+exact same slot or don't overlap at all, so the danger window is cut in
+half. The best-case throughput doubles to 1/e, or about 37 percent. The
+cost is that every station needs to agree on when the slots start,
+which means some kind of shared clock.
+
+Quick summary:
+
+    Protocol        Danger window       Best throughput
+    ------------    ----------------    ---------------
+    Pure ALOHA      2 packet times      1/(2e) = ~18%
+    Slotted ALOHA   1 packet time       1/e    = ~37%
+
+Neither number looks great, but for a bunch of terminals where people
+are typing and only sending a packet every so often, the channel is
+mostly idle anyway, so collisions are not that common in practice.
+
+
+What came after
+---------------
+
+ALOHAnet was small, but its idea of letting everyone share one channel
+and sorting out collisions afterward turned out to be a big deal. Bob
+Metcalfe studied the ALOHA work before designing Ethernet at Xerox PARC
+in the 1970s. Ethernet kept the random backoff idea and added two
+things that are easy to do on a shared cable:
+
+  - Carrier sense: listen first, and don't start sending if someone
+    else is already talking.
+  - Collision detection: if you notice a collision while sending, stop
+    right away instead of finishing the whole frame.
+
+Put together, that is CSMA/CD, which is what classic Ethernet used.
+
+Wi-Fi also uses carrier sense and random backoff, but it tries to avoid
+collisions instead of detecting them, because a radio usually can't
+hear a collision while it is transmitting. Cell phones use an
+ALOHA-style random access step when they first contact a tower. So a
+lot of the networks people use every day still have a little bit of
+ALOHAnet in them.
+
+
+How this connects to the assignment
+-----------------------------------
+
+In this assignment we don't have to deal with any of that directly. The
+programs use TCP through Java's Socket class, and TCP takes care of
+lost packets, retransmissions, and putting the bytes back in order
+before our code ever sees them.
+
+The flow is:
+
+  1. The server opens a ServerSocket on the port given on the command
+     line and waits in accept().
+  2. The client creates a Socket to localhost on the same port. This is
+     where the TCP three-way handshake happens.
+  3. accept() returns a Socket for that client, and the server writes
+     the contents of server_file.txt into the socket's output stream.
+  4. The server closes the socket.
+  5. The client keeps reading from its input stream until read()
+     returns -1. That -1 is how the client knows the server closed the
+     connection and the whole file has arrived.
+  6. The client saves everything it read as client_file.txt.
+
+If everything worked, this line should be the last one in both
+server_file.txt and client_file.txt.
+
+End of file.
